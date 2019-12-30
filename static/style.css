@@ -1,0 +1,34 @@
+BODY {
+  background-color: white;
+  font-family: sans-serif;
+  margin-left: 25px;
+  margin-right: 15px;
+  max-width: 50em;
+}
+H1, H2, H3 {
+  font-weight: normal;
+  margin-left: -15px;
+}
+.section {
+  display: none;
+}
+.solution {
+  display: none;
+}
+pre.prettyprint {
+  border: none !important;
+}
+.footer {
+  margin-top: 2em;
+  font-size: small;
+}
+.balls {
+  float: right;
+}
+.CodeMirror {
+  border: 1px solid #888;
+  height: auto !important;
+}
+.CodeMirror-scroll {
+  overflow-y: hidden !important;
+}

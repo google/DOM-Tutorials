@@ -1,0 +1,35 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutorial 3: DOM Events: Star Table Demo</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+  <h1>Tutorial 3: DOM Events: Star Table Demo</h1>
+
+<p>Mouse over the table of stars.</p>
+
+<table id="star_table"></table>
+
+<script>
+  var table = document.getElementById('star_table');
+  table.innerHTML = '';
+  for (var y = 0; y < 10; y++) {
+    var row = document.createElement('tr');
+    table.appendChild(row);
+    for (var x = 0; x < 10; x++) {
+      var cell = document.createElement('td');
+      var img = document.createElement('img');
+      <!-- No, this is NOT how to solve the problem.  Use one event handler. -->
+      img.addEventListener('mouseover', function() {this.src = 'star_on.gif';}, false);
+      row.appendChild(cell);
+      cell.appendChild(img);
+      img.src = 'star_off.gif';
+    }
+  }
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutorial 3: DOM Events</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="common.js"></script>
+  <script src="3.js"></script>
+  <link href="third_party/codeprettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script src="third_party/codeprettify/prettify.js"></script>
+  <script src="third_party/codemirror/lib/codemirror.js"></script>
+  <link rel="stylesheet" href="third_party/codemirror/lib/codemirror.css">
+  <script src="third_party/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="third_party/codemirror/mode/javascript/javascript.js"></script>
+</head>
+<body>
+  <h1>Tutorial 3: DOM Events</h1>
+
+<script>
+  if (!document.addEventListener) {
+    alert('Whoa, you appear to be using an ancient version of Internet Explorer.\n' +
+          'For this tutorial please use a standard-compliant browser.\n' +
+          'Lessons 2-5 and the exercise WILL NOT WORK!');
+  }
+</script>
+
+  <p>This tutorial will teach you how to handle events in the DOM from JavaScript.
+  Knowledge of how to access the DOM from JavaScript is assumed.
+  There are five short lessons, followed by one exercise.</p>
+
+  <p><img src="warning.png" height=28 width=30 style="float: left; margin-right: 1em">
+  It is highly recommended that you open your browser's JavaScript console now.
+  When stuff doesn't work, there's usually an error printed in the console.
+  The console is your friend.</p>
+
+  <p><button onclick="Tutorial.showDiv('section1', this)">Start Lesson 1 &darr;</button></p>
+
+  <div id="section1" class="section">
+    <h2>Lesson 1: Traditional Model</h2>
+    <p>The simplest way to make an element on a web page respond to an event is
+    to set the element's <code>.onclick</code> property to a function.  When the
+    element is clicked, the function is executed.  Within the function, the
+    magic variable <code>this</code> will be the element that was clicked.</p>
+
+    <p>This is the HTML for the 'Execute' button below:</p>
+<pre class="prettyprint">&lt;button id="first"&gt;Execute&lt;/button&gt;</pre>
+
+    <p>Write some JavaScript code below that finds the button using
+    <code>getElementById</code>, then sets the element's <code>.onclick</code>
+    property to a function that sets the button's style.background property to
+    <tt style="background-color: #ff8">'#ff8'</tt>.</p>
+
+    <p><textarea id="code1">
+
+</textarea><br>
+    <span id="playground1" style="display: none"></span>
+    <button id="execute1" onclick="Tutorial.setup1(); Tutorial.execute(1)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution1', this)" id="giveup1">See Answer</button></p>
+
+    <div id="solution1" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('first').onclick = function() {<br>
+&nbsp; this.style.background = '#ff8';<br>
+};</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section2', this)">Start Lesson 2 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section2" class="section">
+    <h2>Lesson 2: WC3 Event Model</h2>
+    <p>The traditional model used above scales badly.  Don't use it.
+    Consider what would happen if two different libraries attempted to set an
+    event handler on the same element. The second library would clobber the first.
+    As JavaScript applications grew in size this became an increasing problem.</p>
+
+    The <code>addEventListener</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/element.addEventListener">[?]</a></small></sup>
+    function provides a more flexible method of handling events.  The syntax is:
+    <code>element.addEventListener('click', yourFunction, false)</code>
+
+    <p>This is the HTML for the 'Execute' button below:</p>
+<pre class="prettyprint">&lt;button id="w3c"&gt;Execute&lt;/button&gt;</pre>
+
+    <p>Write some JavaScript code below that uses <code>addEventListener</code>
+    to turn the button's style.background property to
+    <tt style="background-color: #ff8">'#ff8'</tt> when it is clicked.
+    For bonus marks, try adding a second, separate click handler that calls:
+    <code>alert('Hello')</code></p>
+
+    <p><textarea id="code2">
+
+</textarea><br>
+    <span id="playground2" style="display: none"></span>
+    <button id="execute2" onclick="Tutorial.setup2(); Tutorial.execute(2)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.setup2(); Tutorial.showDiv('solution2', this)" id="giveup2">See Answer</button></p>
+
+    <div id="solution2" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">var button = document.getElementById('w3c');<br>
+button.addEventListener('click', function() {this.style.background = '#ff8';}, false);<br>
+// Bonus:<br>
+button.addEventListener('click', function() {alert('Hello');}, false);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section3', this)">Start Lesson 3 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section3" class="section">
+    <h2>Lesson 3: removeEventListener</h2>
+    <p>Once you add an event listener, it will fire every time that event
+    occurs.  To stop listening, use the
+    <code>element.removeEventListener('click', yourFunction, false)</code>
+    function.<sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/element.removeEventListener">[?]</a></small></sup>
+    Note that you must provide <code>removeEventListener</code> with a
+    pointer to the same function that you provided to <code>addEventListener</code>.
+
+    <p>Here is an image of a star: &nbsp;
+    <span id="playground3"></span></p>
+
+    <p>This is the HTML for the above image:</p>
+<pre class="prettyprint">&lt;img id="once_star" src="star_on.gif"&gt;</pre>
+
+    <p>Write some JavaScript code below that uses <code>addEventListener</code>
+    to pop open an <code>alert('Hello')</code> dialog when the star is clicked.
+    This handler should also self-destruct, by using <code>removeEventListener</code>
+    to stop it from firing ever again.</p>
+
+    <p><textarea id="code3">
+
+</textarea><br>
+    <button id="execute3" onclick="Tutorial.setup3(); Tutorial.resetSection3();">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution3', this)" id="giveup3">See Answer</button></p>
+
+    <div id="solution3" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">var img = document.getElementById('once_star');<br>
+var clickFunc = function() {<br>
+&nbsp; alert('Hello');<br>
+&nbsp;  img.removeEventListener('click', clickFunc, false);<br>
+};<br>
+img.addEventListener('click', clickFunc, false);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section4', this)">Start Lesson 4 &darr;</button></p>
+    </div>
+  </div>
+
+  <div id="section4" class="section">
+    <h2>Lesson 4: Event object</h2>
+    <p>When an event handler is called, it is passed one argument: an
+    <code>Event</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/event">[?]</a></small></sup>
+    object.  This object contains a bunch of useful information about the event, including
+    which mouse buttons were used, whether the shift or control keys were pressed, etc.
+    Click this star, and check the console to see the resulting event object:
+    <img id="event_star" src="star_on.gif" style="cursor: pointer;">
+    </p>
+
+    <p>Here is the JavaScript code for the above star:</p>
+
+    <pre class="prettyprint">var handler = function(e) {
+  console.log(e);
+};
+document.getElementById('event_star').addEventListener('click', handler, false);</pre>
+
+    <p>One of the most useful properties is
+    <code>target</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/event.target">[?]</a></small></sup>
+    which contains the DOM node that was clicked (or otherwise manipulated).
+    This allows one to add a single event handler to a parent node, then deal
+    with the appropriate node when an event is triggered.</p>
+
+<table style="width: 100%"><tr><td valign=top>
+    <p>Here is a table containing 100 stars:</p>
+    <style>
+      #star_table td {
+        padding: 2px;
+      }
+    </style>
+    <div id="playground4"></div>
+</td><td valign=top>
+    <p>This is the HTML for the table to the left:</p>
+    <pre class="prettyprint">&lt;table id="star_table"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;img src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img src="star_off.gif"&gt;&lt;td&gt;
+    ...
+  &lt;tr&gt;
+  &lt;/tr&gt;
+    &lt;td&gt;&lt;img src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img src="star_off.gif"&gt;&lt;td&gt;
+    ...
+  &lt;tr&gt;
+  ...
+&lt;/table&gt;</pre>
+</td></tr></table>
+
+    <p>The goal of this lesson is to be able to mouse over the table and
+    have the stars turn 'on' wherever the mouse goes using the
+    <code>'mouseover'</code> event
+    (<a target="help" href="star_table.html">see&nbsp;demo</a>).
+    But instead of creating 100 event handlers, just create one
+    handler on the table that uses the event's <code>target</code> property
+    to change the <code>src</code> property of the correct star.</p>
+
+    <p><textarea id="code4">
+
+</textarea><br>
+    <button id="execute4" onclick="Tutorial.setup4(); Tutorial.resetSection4();">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution4', this)" id="giveup4">See Answer</button></p>
+
+    <div id="solution4" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">var func = function(e) {<br>
+&nbsp; if (e.target.src) {<br>
+&nbsp; &nbsp; e.target.src = 'star_on.gif';<br>
+&nbsp; }<br>
+};<br>
+document.getElementById('star_table').addEventListener('mouseover', func, false);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section5', this)">Start Lesson 5 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section5" class="section">
+    <h2>Lesson 5: preventDefault</h2>
+    <p>The event object that is passed to handler functions also includes some
+    useful methods that can effect what happens after handler finishes executing.
+    One of these methods is <code>preventDefault</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/event.preventDefault">[?]</a></small></sup>.
+    When called, this method prevents the browser from taking its normal actions in response to the event.
+    An example of this is to supress the appearance of the browser's context menu.</p>
+
+    <p>Phone number:
+    <span id="playground5"></span></p>
+
+    <p>Write some JavaScript code below that adds a <code>keypress</code> event handler to the input field (id is <code>"phone"</code>).
+    If the user types something other than a number (look at the event's <code>charCode</code> property for the
+    ASCII<sup><small><a target="help" href="http://ascii.cl/">[?]</a></small></sup>
+    value), then cancel the event by calling <code>preventDefault</code>.</p>
+
+    <p><textarea id="code5">
+
+</textarea><br>
+    <button id="execute5" onclick="Tutorial.setup5(); Tutorial.resetSection5(); Tutorial.execute(5);">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution5', this)" id="giveup5">See Answer</button></p>
+
+    <div id="solution5" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">var func = function(e) {<br>
+&nbsp; if (e.charCode < 48 || e.charCode > 57) {<br>
+&nbsp; &nbsp; e.preventDefault();<br>
+&nbsp; }<br>
+};<br>
+document.getElementById('phone').addEventListener('keypress', func, false);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section6', this)">Start Exercise &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section6" class="section">
+    <h2>Exercise: Context Menu</h2>
+
+    <p>For this exercise we want to implement a custom context menu for Tux, the penguin.</p>
+
+    <table style="width: 100%"><tr><td valign=top id="playground6">
+    </td><td valign=top>
+      <p>This is the HTML for a menu which exists, but is currently hidden:</p>
+      <pre class="prettyprint">&lt;div id="menu"&gt;
+  &lt;div id="option1"&gt;Photograph&lt;/div&gt;
+  &lt;div id="option2"&gt;Rub belly&lt;/div&gt;
+  &lt;div id="option3"&gt;Feed a fish&lt;/div&gt;
+&lt;/div&gt;</pre>
+    </td></tr></table>
+
+    <style>
+      #menu {
+        display: none;
+        position: absolute;
+        border: solid 1px #ccc;
+      }
+      #menu div {
+        padding: 2px 1em;
+        background-color: #fff;
+        cursor: default;
+      }
+      #menu div:hover {
+        background-color: #68f;
+        color: #fff;
+      }
+    </style>
+
+    <p>Write some JavaScript code below that does as many of the following as you can:</p>
+    <ol>
+      <li>Add a <code>click</code> event handler to the penguin (his id is <code>"tux"</code>) that makes the menu visible (<code>style.display = 'block'</code>).</li>
+      <li>Move the menu (e.g. <code>style.left = '123px'</code> and <code>style.top = '123px'</code>) to the mouse's location. Use the event's <code>pageX</code> and <code>pageY</code> properties.</li>
+      <li>Instead of using <code>click</code>, use <code>contextmenu</code> to detect the right mouse button.</li>
+      <li>Supress the browser's own context menu.
+      <li>Add a click handler to the whole page (<code>document.body</code>) that hides the menu (<code>style.display = 'none'</code>).</li>
+      <li>Add event handlers to each option that does something.</li>
+    </ol>
+
+    <p><textarea id="menuTest" id="code6">
+
+</textarea><br>
+    <button onclick="Tutorial.setup6(); Tutorial.menuTest()">Reset &amp; Execute</button></p>
+
+    <p>Use the <a href="https://groups.google.com/d/forum/intro-to-javascript">Intro
+    to JavaScript forum</a> to share your solution to this exercise and see other
+    people's solutions.</p>
+  </div>
+
+  <hr>
+  <div class="balls"><img src="google_balls.jpg" height=68 width=101></div>
+  <div class="footer">&larr; <a href='index.html'>JavaScript DOM Tutorials</a> -
+    Google &copy; 2013 - Neil Fraser (fraser@google.com)</div>
+
+</body>
+</html>

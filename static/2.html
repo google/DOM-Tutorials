@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutorial 2: Manipulating the DOM</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="common.js"></script>
+  <script src="2.js"></script>
+  <link href="third_party/codeprettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script src="third_party/codeprettify/prettify.js"></script>
+  <script src="third_party/codemirror/lib/codemirror.js"></script>
+  <link rel="stylesheet" href="third_party/codemirror/lib/codemirror.css">
+  <script src="third_party/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="third_party/codemirror/mode/javascript/javascript.js"></script>
+</head>
+<body>
+  <h1>Tutorial 2: Manipulating the DOM</h1>
+
+  <p>This tutorial will teach you how to manipulate the DOM from JavaScript.
+  Knowledge of how to access the DOM from JavaScript is assumed.
+  There are five short lessons, followed by one exercise.</p>
+
+  <p><img src="warning.png" height=28 width=30 style="float: left; margin-right: 1em">
+  It is highly recommended that you open your browser's JavaScript console now.
+  When stuff doesn't work, there's usually an error printed in the console.
+  The console is your friend.</p>
+
+  <p><button onclick="Tutorial.showDiv('section1', this)">Start Lesson 1 &darr;</button></p>
+
+
+  <div id="section1" class="section">
+    <h2>Lesson 1: innerHTML</h2>
+    <p>The simplest way to to change the DOM is to assign some HTML to an element's
+    <code>innerHTML</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/element.innerHTML">[?]</a></small></sup>
+    property.  This will erase the element's current content and
+    replace it with your own.</p>
+    <p>E.g. <code>element.innerHTML = 'Hello&lt;br&gt;World'</code></p>
+    <p>Here is a span which contains some text and an image: &nbsp;
+<span id="field">Wish upon a <img src="star_off.gif"></span></p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span id="field"&gt;
+&#9507; Wish upon a
+&#9495; &lt;img src="star_off.gif"&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below that removes both the text and the star, and
+    replaces them with a star that's 'on'.  There is a 'star_on.gif' image on this server.</p>
+
+    <p><textarea id="code1"></textarea><br>
+    <button id="execute1" onclick="Tutorial.execute(1)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution1', this)" id="giveup1">See Answer</button></p>
+
+    <div id="solution1" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('field').innerHTML = '&lt;img src="star_on.gif"&gt;';</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section2', this)">Start Lesson 2 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section2" class="section">
+    <h2>Lesson 2: removeChild</h2>
+    <p>In the previous lesson we used <code>innerHTML</code>.  <em>Never use
+    <code>innerHTML</code> again.</em>  Although it is simple, fast and convenient,
+    it opens a boat load of security holes, both obvious and subtle.  Trust us.
+    The rest of this tutorial will examine the more complicated, but safe
+    alternative.</p>
+    <p>Since destroying something is easier than building something, let's
+    start by destroying a node.  Every node has a method
+    <code>removeChild</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.removeChild">[?]</a></small></sup>
+    that takes as an argument the node that is to be destroyed.  Note
+    that this method needs to be called on the offending node's parent.</p>
+    <p>E.g. <code>node1.removeChild(node2)</code></p>
+    <p>Here is a span which contains some text and an image: &nbsp;
+<span>Shooting <img id="fallenstar" src="star_on.gif"></span></p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span&gt;
+&#9507; Shooting
+&#9495; &lt;img id="fallenstar" src="star_on.gif"&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below which deletes the star.</p>
+
+    <p><textarea id="code2">
+
+</textarea><br>
+    <button id="execute2" onclick="Tutorial.checkInnerHTML(2) && Tutorial.execute(2)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution2', this)" id="giveup2">See Answer</button></p>
+
+    <div id="solution2" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">var star = document.getElementById('fallenstar');<br>
+        star.parentNode.removeChild(star);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section3', this)">Start Lesson 3 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section3" class="section">
+    <h2>Lesson 3: appendChild</h2>
+    <p>Nodes may be added as children of another node with the
+    <code>appendChild</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.appendChild">[?]</a></small></sup>
+    method.  This method is called on the new parent and takes the child as its argument.
+    If the child you are appending is an existing element in the DOM, it will be automatically
+    removed from its existing location.  Any grandchildren will follow the child.</p>
+    <p>E.g. <code>node1.appendChild(node2)</code></p>
+    <p>Here is a span which contains some text and an image: &nbsp;
+    <span id="section3span"></span></p>
+
+    <p>This is the DOM tree for the above spans:</p>
+<pre class="prettyprint">&lt;span&gt;
+&#9507; &lt;span id="source"&gt;
+&#9475; &#9507; Here's a star:
+&#9475; &#9495; &lt;img src="star_on.gif"&gt;
+&#9475; &lt;/span&gt;
+&#9495; &lt;span id="target"&gt;
+  &#9495; Move it here:
+  &lt;/span&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below which moves the star from 'source'
+    to the end of 'target', without changing the text.</p>
+
+    <p><textarea id="code3"></textarea><br>
+    <button id="execute3" onclick="Tutorial.checkInnerHTML(3) && Tutorial.checkRemoveChild(3) && Tutorial.resetSection3() && Tutorial.execute(3)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution3', this)" id="giveup3">See Answer</button></p>
+
+    <div id="solution3" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('target').appendChild(document.getElementById('source').lastChild);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section4', this)">Start Lesson 4 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section4" class="section">
+    <h2>Lesson 4: document.createTextNode</h2>
+    <p>Creating a new text node is easy, use just call
+    <code>document.createTextNode('hello')</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/document.createTextNode">[?]</a></small></sup></p>
+    <p>Here is a span which contains a formula: &nbsp;
+<span id="math">6 * 7 = </span></p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span id="math"&gt;
+&#9495; 6 * 7 =
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below which completes the equation.</p>
+
+    <p><textarea id="code4"></textarea><br>
+    <button id="execute4" onclick="Tutorial.checkInnerHTML(4) && Tutorial.execute(4)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution4', this)" id="giveup4">See Answer</button></p>
+
+    <div id="solution4" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('math').appendChild(document.createTextNode('42'));</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section5', this)">Start Lesson 5 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section5" class="section">
+    <h2>Lesson 5: document.createElement</h2>
+    <p>New elements are created by calling
+    <code>document.createElement('SPAN')</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/document.createElement">[?]</a></small></sup>
+    with the argument being the element's HTML tag name.</p>
+    <p>Here is an empty span: &nbsp; <span id="sky"></span></p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span id="sky"&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below which creates an image, sets its 'src'
+    property to a star, and inserts it into the empty span.</p>
+
+    <p><textarea id="code5">
+
+
+</textarea><br>
+    <button id="execute5" onclick="Tutorial.checkInnerHTML(5) && Tutorial.execute(5)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution5', this)" id="giveup5">See Answer</button></p>
+
+    <div id="solution5" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">var img = document.createElement('IMG');<br>
+img.src = 'star_on.gif';<br>
+document.getElementById('sky').appendChild(img);</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section6', this)">Start Exercise &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section6" class="section">
+    <h2>Exercise: Roller Coaster Text</h2>
+
+    <p>You now know the API for manipulating a DOM tree.
+    For this exercise, put all these pieces together to write code that takes a
+    string and renders it with undulating font sizes.  Each letter should be in its own
+    'span' tag, and each span's <code>.style.fontSize</code> property starts at '10px'
+    and increases by 5 pixels until the middle of the string is reached, before shrinking
+    back to 10 pixels.  Here is an example:</p>
+
+    <div><span style="font-size: 10px;">D</span><span style="font-size: 15px;">o</span><span style="font-size: 20px;">n</span><span style="font-size: 25px;">'</span><span style="font-size: 30px;">t</span><span style="font-size: 35px;"> </span><span style="font-size: 40px;">B</span><span style="font-size: 45px;">e</span><span style="font-size: 40px;"> </span><span style="font-size: 35px;">E</span><span style="font-size: 30px;">v</span><span style="font-size: 25px;">i</span><span style="font-size: 20px;">l</span><span style="font-size: 15px;">.</span></div>
+
+    <p>Below is an empty div with the id 'rollercoaster' which you can append to:</p>
+
+    <div id="rollercoaster" style="border: dotted 1px #888">&nbsp;</div>
+
+    <p><textarea id="code6">var text = 'Hello World!';
+var div = document.getElementById('rollercoaster');
+
+</textarea><br>
+    <button id="testRun" onclick="Tutorial.checkInnerHTML(6) && Tutorial.testRun()">Execute your code</button>
+    <button id="testReset" onclick="Tutorial.testReset()" disabled="disabled">Empty the div</button></p>
+    <p>Bonus: Try creating an undulating sine wave or shifting colours.</p>
+
+    <p>Use the <a href="https://groups.google.com/d/forum/intro-to-javascript">Intro
+    to JavaScript forum</a> to share your solution to this exercise and see other
+    people's solutions.</p>
+  </div>
+
+
+  <hr>
+  <div class="balls"><img src="google_balls.jpg" height=68 width=101></div>
+  <div class="footer">&larr; <a href='index.html'>JavaScript DOM Tutorials</a> -
+    Google &copy; 2012 - Neil Fraser (fraser@google.com)</div>
+
+</body>
+</html>

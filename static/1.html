@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutorial 1: Accessing the DOM</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="common.js"></script>
+  <script src="1.js"></script>
+  <link href="third_party/codeprettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script src="third_party/codeprettify/prettify.js"></script>
+  <script src="third_party/codemirror/lib/codemirror.js"></script>
+  <link rel="stylesheet" href="third_party/codemirror/lib/codemirror.css">
+  <script src="third_party/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="third_party/codemirror/mode/javascript/javascript.js"></script>
+</head>
+<body>
+  <h1>Tutorial 1: Accessing the DOM</h1>
+
+  <p>This tutorial will teach you how to access the DOM from JavaScript.
+  Basic knowledge of JavaScript and HTML is assumed.
+  There are five short lessons, followed by one exercise.</p>
+
+  <p><img src="warning.png" height=28 width=30 style="float: left; margin-right: 1em">
+  It is highly recommended that you open your browser's JavaScript console now.
+  When stuff doesn't work, there's usually an error printed in the console.
+  The console is your friend.</p>
+
+  <p><button onclick="Tutorial.showDiv('section1', this)">Start Lesson 1 &darr;</button></p>
+
+
+  <div id="section1" class="section">
+    <h2>Lesson 1: getElementById</h2>
+    <p>Finding a node on a page is the most fundamental task when working
+    with the DOM from JavaScript.  The most useful function is
+    <code>document.getElementById('elementId')</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/document.getElementById">[?]</a></small></sup>.
+    This function takes a string and returns the DOM element with that ID.
+    </p>
+    <p>Here is an image of a star: &nbsp; <img id="star" src="star_off.gif"></p>
+    <p>This is the DOM tree for the above image:</p>
+<pre class="prettyprint">&lt;img id="star" src="star_off.gif"&gt;</pre>
+    <p>Write some JavaScript code below that finds the above image element using
+      <code>getElementById</code>, then sets the element's
+      <code>src</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/HTMLImageElement">[?]</a></small></sup>
+      property so that the star becomes on.  There is a 'star_on.gif' image on this server.</p>
+
+    <p><textarea id="code1"></textarea><br>
+    <button id="execute1" onclick="Tutorial.checkStarOn(1) && Tutorial.execute(1)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution1', this)" id="giveup1">See Answer</button></p>
+
+    <div id="solution1" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('star').src = 'star_on.gif';</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section2', this)">Start Lesson 2 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section2" class="section">
+    <h2>Lesson 2: childNodes</h2>
+    <p>Sometimes the node you want to manipulate does not have an ID.
+    This is particularly true of text nodes, which can't have IDs.
+    But there may still be ways to find a node that doesn't have an ID.  Each node has a
+    <code>childNodes</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.childNodes">[?]</a></small></sup>
+    property that contains an ordered array of all its children.  One can index into this array.</p>
+
+    <p>Here is a span containing three stars: &nbsp; <span id="stars"><img src="star_off.gif"><img src="star_off.gif"><img src="star_off.gif"></span></p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span id="stars"&gt;
+&#9507; &lt;img src="star_off.gif"&gt;
+&#9507; &lt;img src="star_off.gif"&gt;
+&#9495; &lt;img src="star_off.gif"&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below that finds the above span element using
+      <code>getElementById</code>, finds the middle star using <code>childNodes</code>,
+      then sets the element's <code>src</code> property so that the star becomes 'on'.
+      The other two stars should be 'off'.
+      Remember that arrays in JavaScript start with index 0.</p>
+
+    <p><textarea id="code2"></textarea><br>
+    <button id="execute2" onclick="Tutorial.resetSection2(); Tutorial.execute(2)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution2', this)" id="giveup2">See Answer</button></p>
+
+    <div id="solution2" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('stars').childNodes[1].src = 'star_on.gif';</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section3', this)">Start Lesson 3 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section3" class="section">
+    <h2>Lesson 3: firstChild &amp; lastChild</h2>
+    <p>There's a shortcut for finding the first and last child nodes,
+    <code>firstChild</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.firstChild">[?]</a></small></sup> and
+    <code>lastChild</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.lastChild">[?]</a></small></sup>.
+
+    <p>Here is a phrase with a star: &nbsp;
+      <span id="phrase">Twinkle twinkle little <u><img src="star_off.gif"> star.</u></span>
+    </p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span id="phrase"&gt;
+&#9507; Twinkle twinkle little
+&#9495; &lt;u&gt;
+  &#9507; &lt;img src="star_off.gif"&gt;
+  &#9495; star
+  &lt;/u&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below that finds the above span element using
+      <code>getElementById</code>, finds the star using <code>firstChild</code> and/or <code>lastChild</code>,
+      then sets the element's <code>src</code> property so that the star becomes 'on'.</p>
+
+    <p><textarea id="code3"></textarea><br>
+    <button id="execute3" onclick="Tutorial.execute(3)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution3', this)" id="giveup3">See Answer</button></p>
+
+    <div id="solution3" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('phrase').lastChild.firstChild.src = 'star_on.gif';</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section4', this)">Start Lesson 4 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section4" class="section">
+    <h2>Lesson 4: previousSibling &amp; nextSibling</h2>
+    <p>Nodes also have
+    <code>previousSibling</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.previousSibling">[?]</a></small></sup> and
+    <code>nextSibling</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.nextSibling">[?]</a></small></sup>
+    properties that allow one to slide sideways on the DOM tree.
+
+    <p>Here is another span containing three stars: &nbsp;
+      <span><img src="star_off.gif"><img src="star_off.gif"><img id="laststar" src="star_off.gif"><span></p>
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span&gt;
+&#9507; &lt;img src="star_off.gif"&gt;
+&#9507; &lt;img src="star_off.gif"&gt;
+&#9495; &lt;img id="laststar" src="star_off.gif"&gt;
+&lt;/span&gt;</pre>
+    <p>Write some JavaScript code below that finds the last star, then walks back
+    to turn the first star 'on'. The other two stars should be 'off'.</p>
+
+    <p><textarea id="code4"></textarea><br>
+    <button id="execute4" onclick="Tutorial.resetSection4(); Tutorial.execute(4)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution4', this)" id="giveup4">See Answer</button></p>
+
+    <div id="solution4" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('laststar').previousSibling.previousSibling.src = 'star_on.gif';</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section5', this)">Start Lesson 5 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section5" class="section">
+    <h2>Lesson 5: parentNode</h2>
+    <p>The last DOM-walking property is
+    <code>parentNode</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/Node.parentNode">[?]</a></small></sup>.
+    As might be expected, this returns the node that encloses the current node.</p>
+
+    <p>Here is a more complex snippet:  &nbsp;
+      <span><b><small id="start_here">Twinkle </small></b><i>twinkle little <img src="star_off.gif"></i></span></p>
+
+    <p>This is the DOM tree for the above span:</p>
+<pre class="prettyprint">&lt;span&gt;
+&#9507; &lt;b&gt;
+&#9475; &#9495; &lt;small id="start_here"&gt;
+&#9475;   &#9495; Twinkle
+&#9475;   &lt;/small&gt;
+&#9475; &lt;/b&gt;
+&#9495; &lt;i&gt;
+  &#9507; twinkle little
+  &#9495; &lt;img src="star_off.gif"&gt;
+  &lt;/i&gt;
+&lt;span&gt;</pre>
+    <p>Write some JavaScript code below that starts with the <code>small</code> tag,
+    then walks to the star and turns it 'on'.<br>
+    Bonus: Not counting <code>getElementById</code> and <code>src</code>, can you do it in only three steps?</p>
+
+    <p><textarea id="code5"></textarea><br>
+    <button id="execute5" onclick="Tutorial.execute(5)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution5', this)" id="giveup5">See Answer</button></p>
+
+    <div id="solution5" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <code class="prettyprint">document.getElementById('start_here').parentNode.nextSibling.lastChild.src = 'star_on.gif';</code>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section6', this)">Start Exercise &darr;</button></p>
+    </div>
+  </div>
+
+  <div id="section6" class="section">
+    <h2>Exercise: Tree Walker</h2>
+
+    <p>One final detail is that the <span><code>firstChild</code></span>,
+    <span><code>lastChild</code></span>, <span><code>previousSibling</code></span>,
+    <span><code>nextSibling</code></span>, and <span><code>parentNode</code></span>
+    properties return null if there is no such child, sibling or parent node.
+    Likewise, the <span><code>childNodes</code></span> array is of length zero if there are no
+    child nodes.</p>
+
+    <p>You now know the API for navigating your way around any DOM tree.
+    For this exercise, put all these pieces together to write a function called
+    <span><code>nextNode</code></span> that can be used to walk through all the nodes of a DOM tree.
+    The function should take a node as an argument, and return the next node in
+    the tree. For example, the following loop would visit every node once, and
+    only once:</p>
+
+<pre class="prettyprint">  var node = document.body;
+  do {
+    node = nextNode(node);
+  } while (node != null)
+</pre>
+
+    <p>This is not an easy exercise, it requires careful thought.
+    Beware of infinite loops which may crash your browser.</p>
+
+    <p><textarea id="code6">nextNode = function(node) {
+  //...Code goes here to walk to the next node...
+  return node;
+};</textarea><br>
+    <button id="testStep" onclick="Tutorial.testStep()">Execute single step</button>
+    <button id="testReset" onclick="Tutorial.testReset()">Reset to start</button></p>
+    <p>Test your <code>nextNode</code> function by repeatedly clicking the
+    "Execute single step" button.  It will highlight each node in sequence,
+    starting with the title of this exercise. Elements (which correspond with HTML
+    tags) receive a green border, text nodes receive a green background.</p>
+
+    <p>Use the <a href="https://groups.google.com/d/forum/intro-to-javascript">Intro
+    to JavaScript forum</a> to share your solution to this exercise and see other
+    people's solutions.</p>
+  </div>
+
+  <hr>
+  <div class="balls"><img src="google_balls.jpg" height=68 width=101></div>
+  <div class="footer">&larr; <a href='index.html'>JavaScript DOM Tutorials</a> -
+    Google &copy; 2012 - Neil Fraser (fraser@google.com)</div>
+
+</body>
+</html>

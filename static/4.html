@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutorial 4: Asynchronous Server Requests</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="common.js"></script>
+  <script src="4.js"></script>
+  <link href="third_party/codeprettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script src="third_party/codeprettify/prettify.js"></script>
+  <script src="third_party/codemirror/lib/codemirror.js"></script>
+  <link rel="stylesheet" href="third_party/codemirror/lib/codemirror.css">
+  <script src="third_party/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="third_party/codemirror/mode/javascript/javascript.js"></script>
+</head>
+<body>
+  <h1>Tutorial 4: Asynchronous Server Requests</h1>
+
+  <p>This tutorial will teach you how to fetch data from the server.
+  Knowledge of how to access the DOM from JavaScript is assumed.
+  There are five short lessons, followed by one exercise.</p>
+
+  <p><img src="warning.png" height=28 width=30 style="float: left; margin-right: 1em">
+  It is highly recommended that you open your browser's JavaScript console now.
+  When stuff doesn't work, there's usually an error printed in the console.
+  The console is your friend.</p>
+
+  <p><button onclick="Tutorial.showDiv('section1', this)">Start Lesson 1 &darr;</button></p>
+
+
+  <div id="section1" class="section">
+    <h2>Lesson 1: XMLHttpRequest</h2>
+    <p>Fetching new data from the server without reloading the page makes web
+    applications much faster and more responsive.  On this server there is a
+    file called <code><a href="data.txt" target="help">data.txt</a></code>.
+    Let's fetch the contents of this file with JavaScript.</p>
+
+    <p>Here is the skeleton for an <code>XMLHttpRequest</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest">[?]</a></small></sup> call:</p>
+<style>
+  .bubble {
+    display: none;
+    position: absolute;
+    border: 3px solid #580;
+    background-color: #fff;
+    top: -0.8ex;
+    left: 0;
+    padding: 2px 5px;
+    margin-left: 20px;
+    border-radius: 5px;
+  }
+  .bubble:before {
+    content: "\25C4";
+    left: -10px;
+    position: absolute;
+    display: block;
+    color: #580;
+  }
+  span.anchor {
+    position: relative;
+  }
+  #codeHelp>span:hover span.bubble {
+    display: block;
+  }
+</style>
+    <pre id="codeHelp" class="prettyprint">var sendAjax = function() {
+  <span>var req = new XMLHttpRequest();<span class="anchor"><span class="bubble">Create a new XMLHttpRequest object.</span></span></span>
+  <span>req.open('GET', 'data.txt');<span class="anchor"><span class="bubble">Configure the XMLHttpRequest object.<br>Use GET or POST, and set the relative URL.</span></span></span>
+  <span>req.onreadystatechange = myResponseHandler;<span class="anchor"><span class="bubble">When the response comes back from the server,<br>call this function. 'this' will be the XMLHttpRequest object.</span></span></span>
+  <span>req.send();<span class="anchor"><span class="bubble">Actually send the request.</span></span></span>
+};
+<span>document.getElementById('execute1').addEventListener('click', sendAjax, false);<span class="anchor"><span class="bubble">When the button is clicked,<br>send the AJAX request.</span></span></span></pre>
+
+    <p>Mouse over each of the above lines to see what's happening.</p>
+
+    <p>Write some JavaScript code below that defines <code>myResponseHandler</code>
+    as a function that simply alerts <code>this.responseText</code>.
+    Then click the 'Execute' button.</p>
+
+    <p><textarea id="code1">
+
+</textarea><br>
+    <button id="execute1" onclick="Tutorial.resetSection1(); Tutorial.execute(1)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution1', this)" id="giveup1">See Answer</button></p>
+
+    <div id="solution1" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <div>Multiple alerts are OK!  The next lesson will explain why.</div>
+        <pre class="prettyprint">var myResponseHandler = function() {
+  alert(this.responseText);
+};</pre>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section2', this)">Start Lesson 2 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section2" class="section">
+    <h2>Lesson 2: readyState &amp; status</h2>
+    <p>The previous lesson resulted in three alerts.  That's because the
+    response handler was called at three different stages of the request:</p>
+    <ol start=2>
+      <li>The connection is about to be made.</li>
+      <li>Data has started to arrive from the connection.</li>
+      <li>All data has been received.</li>
+    </ol>
+
+    <p>Most response handlers only care about the final state (4). Therefore your
+    response handler should only alert if the XMLHttpRequest object's
+    <code>readyState</code> property is <code>4</code>.</p>
+
+    <p>Likewise, your response handler should also check that the page loaded correctly
+    with an HTTP code of <code>200</code>.  Sometimes the server will fail, return an
+    HTTP code of <code>500</code>, and you don't want your handler attempting to parse
+    some random Python stack trace instead of data.  Therefore your response handler should also
+    only alert if the XMLHttpRequest object's <code>status</code> property is <code>200</code>.</p>
+
+    <p>Write some JavaScript code below that defines <code>myResponseHandler</code>
+    as a function that alerts <code>this.responseText</code> only if <code>this.readyState</code>
+    and <code>this.status</code> have the correct values.
+    (In the context of a response handler, <code>this</code> is the XMLHttpRequest object.)
+    Then click the 'Execute' button.</p>
+
+    <p><textarea id="code2">
+
+</textarea><br>
+    <button id="execute2" onclick="Tutorial.resetSection2(); Tutorial.execute(2)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution2', this)" id="giveup2">See Answer</button></p>
+
+    <div id="solution2" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <pre class="prettyprint">var myResponseHandler = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    alert(this.responseText);
+  }
+};</pre>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section3', this)">Start Lesson 3 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section3" class="section">
+    <h2>Lesson 3: XML</h2>
+
+    <p>As implied by the name, XMLHttpRequest is often used to request XML from the server.
+    The code in previous lessons can fetch XML, but it would arrive as text, leaving you to
+    write a parser.  A better way is to use the <code>responseXML</code> property instead of the
+    <code>responseText</code> property.  Then the contents of the <code>responseXML</code> property will
+    contain a fully-parsed DOM tree.</p>
+
+    <pre class="prettyprint">var sendAjax = function() {
+  var req = new XMLHttpRequest();
+  req.open('GET', <b>'data.xml'</b>);
+  req.onreadystatechange = myResponseHandler;
+  req.send();
+};
+document.getElementById('execute3').addEventListener('click', sendAjax, false);</pre>
+
+    <p>On this server there is a file called <code><a href="data.xml" target="help">data.xml</a></code>.
+    Write some JavaScript code below that defines <code>myResponseHandler</code>
+    as a function that fetches this data, finds the first cat using
+    <code>this.responseXML.getElementsByTagName</code>, and alerts its name.</p>
+
+    <p><textarea id="code3">
+
+</textarea><br>
+    <button id="execute3" onclick="Tutorial.resetSection3(); Tutorial.execute(3)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution3', this)" id="giveup3">See Answer</button></p>
+
+    <div id="solution3" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <pre class="prettyprint">var myResponseHandler = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    alert(this.responseXML.getElementsByTagName('cat')[0].getAttribute('name'));
+  }
+};</pre>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section4', this)">Start Lesson 4 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section4" class="section">
+    <h2>Lesson 4: JSON</h2>
+    <p>In addition to text and XML, JSON<sup><small><a target="help" href="http://www.json.org/">[?]</a></small></sup>
+    is an extremely common data type.  Parsing JSON is easy, just get the data as text
+    and pass it to <code>JSON.parse()</code>.
+
+    <pre class="prettyprint">var sendAjax = function() {
+  var req = new XMLHttpRequest();
+  req.open('GET', <b>'data.json'</b>);
+  req.onreadystatechange = myResponseHandler;
+  req.send();
+};
+document.getElementById('execute4').addEventListener('click', sendAjax, false);</pre>
+
+    <p>On this server there is a file called <code><a href="data.json" target="help">data.json</a></code>.
+    Write some JavaScript code below that defines <code>myResponseHandler</code>
+    as a function that fetches this data, finds the first
+    astronaut to walk on the moon, and alerts his name.</p>
+
+    <p><textarea id="code4">
+
+</textarea><br>
+    <button id="execute4" onclick="Tutorial.resetSection4(); Tutorial.execute(4)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution4', this)" id="giveup4">See Answer</button></p>
+
+    <div id="solution4" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <pre class="prettyprint">var myResponseHandler = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    alert(JSON.parse(this.responseText).apollo11[0]);
+  }
+};</pre>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section5', this)">Start Lesson 5 &darr;</button></p>
+    </div>
+  </div>
+
+
+  <div id="section5" class="section">
+    <h2>Lesson 5: Sending data</h2>
+    <p>Previous lessons have demonstrated how to receive data from the server,
+    but what about sending data to the server?  The simplest way to do this is to
+    use the GET method to append data to the URL.</p>
+
+    <p>This server hosts a simple calculator.  This link demonstrates the addition of two numbers:
+    <a href="/add.py?a=4&b=8" target="help"><code>/add.py?a=4&b=8</code></a></p>
+
+    <p>Modify the JavaScript code below so that the numbers in the following two
+    input fields (with IDs <code>"number1"</code> and <code>"number2"</code> respectively)
+    are added together and the number alerted.  The contents of an input field may be obtained
+    from its <code>value</code> property.</p>
+
+    <p><input id="number1" value="27" size=4> + <input id="number2" value="15" size=4></p>
+
+    <p><textarea id="code5">var req = new XMLHttpRequest();
+req.open('GET', '/add.py?a=4&b=8');
+req.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      alert(this.responseText);
+    }
+  };
+req.send();
+</textarea><br>
+    <button id="execute5" onclick="Tutorial.execute(5)">Execute</button>
+    &nbsp;
+    <button onclick="Tutorial.showDiv('solution5', this)" id="giveup5">See Answer</button></p>
+
+    <div id="solution5" class="solution">
+      <fieldset>
+        <legend>Sample solution</legend>
+        <pre class="prettyprint">var req = new XMLHttpRequest();
+var a = document.getElementById('number1').value;
+var b = document.getElementById('number2').value;
+req.open('GET', '/add.py?a=' + a + '&b=' + b);
+req.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      alert(this.responseText);
+    }
+  };
+req.send();</pre>
+      </fieldset>
+
+      <p><button onclick="Tutorial.showDiv('section6', this)">Start Exercise &darr;</button></p>
+    </div>
+  </div>
+
+  <div id="section6" class="section">
+    <h2>Exercise: Collaborative Stars</h2>
+
+    <p>The goal of this exercise is to write a collaborative drawing application
+    where users can turn stars on and off and all other viewers of this page see
+    the same pattern.</p>
+
+    <ol>
+      <li>Add an event handler to each star (or to the table) so that when a
+      star is clicked it toggles between on and off.</li>
+      <li>Send the clicked star's number (0-99) and new state (0 or 1) to the server in this format:
+      <a href="/collab.py?n=99&s=1" target="help"><code><nobr>/collab.py?n=99&s=1</nobr></code></a></li>
+      <li>The resulting response is a 100 character string that should be used to
+      turn on or off each of the 100 stars.</li>
+    </ol>
+
+    <p>Work through each step, one by one.  When complete, you may wish to open another
+    copy of this page in another window to verify that collaboration is occurring.</p>
+
+<table style="width: 100%"><tr><td valign=top>
+    <p>Here is a table containing 100 stars:</p>
+    <style>
+      #star_table td {
+        padding: 2px;
+      }
+      #star_table img {
+        cursor: pointer;
+      }
+    </style>
+    <div id="playground6"></div>
+</td><td valign=top>
+    <p>This is the HTML for the table to the left:</p>
+    <pre class="prettyprint">&lt;table id="star_table"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;img id="star_0" src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img id="star_1" src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img id="star_2" src="star_off.gif"&gt;&lt;td&gt;
+    ...
+  &lt;tr&gt;
+  &lt;/tr&gt;
+    &lt;td&gt;&lt;img id="star_10" src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img id="star_11" src="star_off.gif"&gt;&lt;td&gt;
+    &lt;td&gt;&lt;img id="star_12" src="star_off.gif"&gt;&lt;td&gt;
+    ...
+  &lt;tr&gt;
+  ...
+&lt;/table&gt;</pre>
+</td></tr></table>
+
+    <p><textarea id="code6">var table = document.getElementById('star_table');
+var stars = table.getElementsByTagName('img');
+
+</textarea><br>
+    <button onclick="Tutorial.resetSection6(); Tutorial.exercise();">Execute your code</button></p>
+
+    <p>Bonus #1: The 'GET' protocol should not be used to change server state,
+    which is what is happening here.  Convert the XMLHttpRequest to use 'POST'.
+    See: <a target="help" href="http://www.openjs.com/articles/ajax_xmlhttp_using_post.php">Using POST method in XMLHttpRequest</a>.</p>
+
+    <p>Bonus #2: Updates only happen when the user clicks a star.  Try creating a recurring task with
+    <code>window.setInterval</code><sup><small><a target="help" href="https://developer.mozilla.org/en-US/docs/DOM/window.setInterval">[?]</a></small></sup>
+    that sends a request to <a href="/collab.py" target="help"><code>/collab.py</code></a>
+    with no arguments to get an update.</p>
+
+    <p>Use the <a href="https://groups.google.com/d/forum/intro-to-javascript">Intro
+    to JavaScript forum</a> to share your solution to this exercise and see other
+    people's solutions.</p>
+  </div>
+
+  <hr>
+  <div class="balls"><img src="google_balls.jpg" height=68 width=101></div>
+  <div class="footer">&larr; <a href='index.html'>JavaScript DOM Tutorials</a> -
+    Google &copy; 2013 - Neil Fraser (fraser@google.com)</div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+application: dom-tutorials
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: false
+
+handlers:
+# Add two numbers together.
+- url: /add.py
+  script: add.py
+  secure: always
+
+# Collaborative exercise.
+- url: /collab.py
+  script: collab.py
+  secure: always
+
+# Tutorial files.
+- url: /static
+  static_dir: static
+  secure: always
+
+# Redirect for root directory.
+- url: /
+  script: index_redirect.py
+  secure: always
+
+# Favicon.
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+  secure: always
