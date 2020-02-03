@@ -40,7 +40,7 @@ def redirect(environ, start_response):
   headers = [
     ("Location", "/static/index.html")
   ]
-  start_response("302 Found", headers)
+  start_response("301 Found", headers)
   return []
 
 
