@@ -1,7 +1,7 @@
 # Do not upload these files.
 .*
 *.md
-*.komodoproject
-third_party/
-deploy
-LICENSE
+/*.komodoproject
+/third_party/
+/deploy
+/LICENSE
