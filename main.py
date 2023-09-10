@@ -24,7 +24,7 @@ class Grid(ndb.Model):
 
 # Parse a query string (e.g. a=1&b=2) into a dictionary (e.g. {"a": 1, "b": 2}).
 # Very minimal parser.  Does not combine repeated names (a=1&a=2), ignores
-# valueless names (a&b), does not support or isindex.
+# valueless names (a&b), does not support isindex.
 def parse_query(query_string):
   parts = query_string.split('&')
   dict = {}
