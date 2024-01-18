@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 from google.cloud import ndb
-from urllib.parse import unquote
+from urllib.parse import unquote_plus
 
 
 # Datastore model.
@@ -31,7 +31,7 @@ def parse_query(query_string):
   for part in parts:
     tuple = part.split("=", 1)
     if len(tuple) == 2:
-      dict[tuple[0]] = unquote(tuple[1])
+      dict[tuple[0]] = unquote_plus(tuple[1])
   return dict
 
 # Route to requested handler.
